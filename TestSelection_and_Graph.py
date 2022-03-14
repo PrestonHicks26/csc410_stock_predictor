@@ -26,3 +26,5 @@ fig.add_trace(
 fig.update_layout(xaxis_title='Date', yaxis_title='Price', title='User Select Sample plot')
 fig.show()
 # interactive visualization
+#
+# going to be adding more user customizable features as well as the ability to display different data points and/or POI via ml
