@@ -3,8 +3,8 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 df = pd.read_csv('sp500_stocks.csv')
+print(df.head())
 
-df.head()
 user_input = input('Which stock do you want to analyze?\nExample, for Google type GOOG.\nEnter selection here: ')
 user_input = user_input.upper()
 selected_stock = df[df.Symbol == user_input]
