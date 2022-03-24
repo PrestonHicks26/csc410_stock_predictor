@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from sklearn.model_selection import train_test_split
 
 # uses collection of data from supermarkets and departments, according to R. Choudhry and K. Garg stock prices within
 # same industry are highly correlated
@@ -72,3 +73,8 @@ for company in dataFrames:
 combined = pd.concat([big_lots_df, costco_df, ingles_markets_df, kroger_df, spartannash_df, target_df,
                      village_super_market_pd, weis_markets_df, walmart_df])
 combined.to_csv('combined.csv')
+
+train, test = train_test_split(combined, test_size=.3, random_state=1)
+train.to_csv('train.csv')
+test.to_csv('test.csv')
+
