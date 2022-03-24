@@ -44,7 +44,7 @@ def column_modification(name, df):
     for i in range(df.shape[0]):
         company.append(name)
         h_min_l.append(df.at[i, 'High'] - df.at[i, 'Low'])
-        o_min_c.append(df.at[i, 'Open'] - df.at[i, 'Close'])
+        o_min_c.append(df.at[i, 'Open'] - df.at[i, 'Adj Close'])
         _7_day_ma.append(moving_average(i, 7, df))
         _14_day_ma.append(moving_average(i, 14, df))
         _21_day_ma.append(moving_average(i, 21, df))
