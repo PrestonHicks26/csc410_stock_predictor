@@ -8,15 +8,15 @@ from sklearn.model_selection import train_test_split
 # remove close and keep adjusted close as, according to investopedia, adjusted close takes into account additional
 # factors and is more useful for analyzing historical data
 
-big_lots_df = pd.read_csv('BIG.csv')
-costco_df =pd.read_csv('COST.csv')
-ingles_markets_df =pd.read_csv('IMKTA.csv')
-kroger_df =pd.read_csv('KR.csv')
-spartannash_df =pd.read_csv('SPTN.csv')
-target_df =pd.read_csv('TGT.csv')
-village_super_market_pd =pd.read_csv('VLGEA.csv')
-weis_markets_df =pd.read_csv('WMK.csv')
-walmart_df =pd.read_csv('WMT.csv')
+big_df = pd.read_csv('BIG.csv')
+cost_df =pd.read_csv('COST.csv')
+imkta_df =pd.read_csv('IMKTA.csv')
+kr_df =pd.read_csv('KR.csv')
+sptn_df =pd.read_csv('SPTN.csv')
+tgt_df =pd.read_csv('TGT.csv')
+vlgea_df =pd.read_csv('VLGEA.csv')
+wmk_df =pd.read_csv('WMK.csv')
+wmt_df =pd.read_csv('WMT.csv')
 
 #add company name column and additional variables
 def moving_average(i, window, df):
@@ -63,15 +63,15 @@ def column_modification(name, df):
     df['7 Days Standard Deviation'] = _7_days_std_dev
 
 
-dataFrames = {'Big Lots': big_lots_df, 'Cost Co.': costco_df, 'Ingles Markets': ingles_markets_df, 'Kroger': kroger_df,
-              'SpartanNash': spartannash_df, 'Target': target_df, 'Village Super Market': village_super_market_pd,
-              'Weis Markets': weis_markets_df, 'Walmart': walmart_df}
+dataFrames = {'BIG': big_df, 'COST': cost_df, 'IMKTA': imkta_df, 'KR': kr_df,
+              'SPTN': sptn_df, 'TGT': tgt_df, 'VLGEA': vlgea_df,
+              'WMK': wmk_df, 'WMT': wmt_df}
 
 for company in dataFrames:
     column_modification(company, dataFrames[company])
 
-combined = pd.concat([big_lots_df, costco_df, ingles_markets_df, kroger_df, spartannash_df, target_df,
-                     village_super_market_pd, weis_markets_df, walmart_df])
+combined = pd.concat([big_df, cost_df, imkta_df, kr_df, sptn_df, tgt_df,
+                      vlgea_df, wmk_df, wmt_df])
 combined.to_csv('combined.csv')
 
 train, test = train_test_split(combined, test_size=.3, random_state=1)
