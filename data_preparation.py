@@ -42,6 +42,7 @@ def column_modification(name, df):
     _14_day_ma = []
     _21_day_ma = []
     _7_days_std_dev = []
+    increase = []
     for i in range(df.shape[0]):
         company.append(name)
         h_min_l.append(df.at[i, 'High'] - df.at[i, 'Low'])
@@ -53,6 +54,19 @@ def column_modification(name, df):
             _7_days_std_dev.append(np.std(df.iloc[i:i+7, 6]))
         else:
             _7_days_std_dev.append(np.std(df.iloc[i:, 6]))
+        if i < df.shape[0]-1:
+            if (df.at[i + 1, 'Adj Close'] - df.at[i, 'Adj Close']) == 0: # checks how often values are equal to see if alt solution necessary
+                print('Equal')
+                print(df.at[i, 'Date'])
+                print(df.at[i + 1, 'Adj Close'])
+                print(df.at[i, 'Adj Close'])
+            if (df.at[i+1, 'Adj Close']-df.at[i, 'Adj Close'])>0:
+                increase.append(True)
+            else:
+                increase.append(False)
+        else:
+            increase.append(False)
+
     df.drop('Close', axis=1, inplace=True)
     df.insert(0, 'Company', company)
     df['H-L'] = h_min_l
@@ -61,6 +75,7 @@ def column_modification(name, df):
     df['14 Day MA'] = _14_day_ma
     df['21 Day MA'] = _21_day_ma
     df['7 Days Standard Deviation'] = _7_days_std_dev
+    df['Increase'] = increase
 
 
 dataFrames = {'BIG': big_df, 'COST': cost_df, 'IMKTA': imkta_df, 'KR': kr_df,
