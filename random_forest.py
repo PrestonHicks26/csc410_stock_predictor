@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
+from time_series_cross_validation import TimeBasedCV
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.model_selection import TimeSeriesSplit, train_test_split, GridSearchCV
+from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
 
 pd.set_option('display.max_columns', 15)
 
@@ -36,7 +37,7 @@ y = selected_stonk['Increase']
 X = selected_stonk[features]
 print(X.dtypes)
 scores = []
-
+results = []
 for train_index, test_index in tscv.split(selected_stonk, date_column='Date'):
     X_train = X.loc[train_index].drop('Date', axis=1)
     y_train = y.loc[train_index]
@@ -47,14 +48,21 @@ for train_index, test_index in tscv.split(selected_stonk, date_column='Date'):
 
     model = RandomForestClassifier()
     model.fit(X_train, y_train)
-
     predictions = model.predict(X_test)
+
     score = model.score(X_test, y_test)
     scores.append(score)
 
+
 avg_model_score = np.mean(scores)
-print(avg_model_score)
+print('Accuracy: ', avg_model_score)
 
 #rf_model = _train_random_forrest(X_train, y_train, X_test, y_test)
 
 print(tscv.get_n_splits())
+print()
+print(len(scores))
+# makes 517 splits with TGT stock selected
+
+
+# see error: https://stackoverflow.com/questions/38015181/accuracy-score-valueerror-cant-handle-mix-of-binary-and-continuous-target
