@@ -1,9 +1,37 @@
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
-from data_preparation import moving_average
 
+def moving_average(i, window, df):
+    if i<df.shape[0]-window:
+        # selects from adj close column
+        selection = df.iloc[i:i+window,6]
+        sum = 0
+        for num in selection:
+            sum += num
+        return sum/window
+    else: # handles values where window goes past end of column, unsure if this is correct solution
+        selection = df.iloc[i:, 6]
+        sum = 0
+        for num in selection:
+            sum += num
+        return sum / (df.shape[0]-i)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
 sp500_df = pd.read_csv('sp500_stocks.csv')
+
+print(sp500_df.head())
+
+# adjust range to be same as primary dataset
+temp_df = pd.DataFrame()
+for i in range(505):
+    temp_df = pd.concat([temp_df, sp500_df.iloc[i*3080+1:2523+3080*i, :]])
+sp500_df = temp_df
+sp500_df.to_csv('range_test.csv')
+sp500_df = pd.read_csv('range_test.csv') # concat messed up indices, by saving and reloading, pd resets indices
+sp500_df.drop(sp500_df.columns[0], axis=1, inplace=True)
+print(sp500_df.head())
 
 # rearrange columns
 sp500_df.drop('Close', axis=1, inplace=True)
@@ -33,11 +61,11 @@ for i in range(sp500_df.shape[0]):
     else:
         _7_days_std_dev.append(np.std(sp500_df.iloc[i:, 6]))
     if i < sp500_df.shape[0]-1:
-        if (sp500_df.at[i + 1, 'Adj Close'] - sp500_df.at[i, 'Adj Close']) == 0: # checks how often values are equal to see if alt solution necessary
+        """if (sp500_df.at[i + 1, 'Adj Close'] - sp500_df.at[i, 'Adj Close']) == 0: # checks how often values are equal to see if alt solution necessary
             print('Equal')
             print(sp500_df.at[i, 'Date'])
             print(sp500_df.at[i + 1, 'Adj Close'])
-            print(sp500_df.at[i, 'Adj Close'])
+            print(sp500_df.at[i, 'Adj Close'])"""
         if (sp500_df.at[i+1, 'Adj Close']-sp500_df.at[i, 'Adj Close'])>0:
             increase.append(True)
         else:
