@@ -1,31 +1,41 @@
-import numpy as np
+import seaborn as sns
+from genetic_selection import GeneticSelectionCV
 from matplotlib import pyplot as plt
 from scipy.interpolate import interp1d
 from scipy.optimize import brentq
 from sklearn import svm
-from sklearn import metrics
-import pandas as pd
 from sklearn.metrics import confusion_matrix, roc_curve
 from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+import pandas as pd
+import numpy as np
 import time
-import seaborn as sns
+from sklearn import metrics
+
 
 combined_df = pd.read_csv('combined.csv', index_col='Date', parse_dates=['Date'])
-combined_df.to_csv('datetest.csv')
-combined_df = combined_df.iloc[:200,:]
-x = combined_df.loc[:, ['Open', 'High', 'Low', 'Adj Close', 'Volume', 'H-L', 'O-AdjC', '7 Day MA',
+ga_df = combined_df.iloc[:2000,:]
+x = ga_df.loc[:, ['Open', 'High', 'Low', 'Adj Close', 'Volume', 'H-L', 'O-AdjC', '7 Day MA',
                         '14 Day MA', '21 Day MA', '7 Days Standard Deviation']]
-y = combined_df.loc[:, ['Increase']]
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=.3, random_state=1, shuffle=False)
+y = ga_df.loc[:, ['Increase']]
+estimator = DecisionTreeClassifier()
+model = GeneticSelectionCV(estimator)
+start = time.time()
+model = model.fit(x, np.ravel(y))
+end = time.time()
+print('GA runtime: ' + str(end-start))
+print('Features:', x.columns[model.support_])
 
-print(x_train)
-print(y_train)
-print("datasets split")
+svm_df = combined_df.iloc[:500,:]
+X = svm_df.loc[:, x.columns[model.support_]]
+y = svm_df.loc[:, ['Increase']]
+x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=.3, random_state=1, shuffle=False)
+
 classifier = svm.SVC(kernel='linear')
 start = time.time()
 model = classifier.fit(x_train, np.ravel(y_train))
 stop = time.time()
-print("Classification runtime: " + str(stop - start))
+print("SVM runtime: " + str(stop - start))
 print("training complete")
 y_predict = classifier.predict(x_test)
 
@@ -47,10 +57,3 @@ axis.set_ylabel('Actual Values')
 axis.xaxis.set_ticklabels(['False', 'True'])
 axis.yaxis.set_ticklabels(['False', 'True'])
 plt.show()
-
-
-"""combined_df.pop('Company')
-combined_df.pop('Increase')
-print(combined_df)
-model.predict(combined_df)
-"""
